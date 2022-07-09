@@ -26,6 +26,13 @@ func cleanupTempDir(t *testing.T, dirname string) {
 	}
 }
 
+func assertExists(t *testing.T, dirname string) {
+	t.Helper()
+	if _, err := os.Stat(dirname); os.IsNotExist(err) {
+		t.Errorf("%s does not exist", dirname)
+	}
+}
+
 func TestMakePluginDirs(t *testing.T) {
 	tempdirname := prepareTempDir(t, "MakePluginDirs")
 	if err := os.Remove(tempdirname); err != nil {
@@ -42,13 +49,6 @@ func TestMakePluginDirs(t *testing.T) {
 	assertExists(t, filepath.Join(tempdirname, "plugin"))
 	assertExists(t, filepath.Join(tempdirname, "autoload"))
 	assertExists(t, filepath.Join(tempdirname, "doc"))
-}
-
-func assertExists(t *testing.T, dirname string) {
-	t.Helper()
-	if _, err := os.Stat(dirname); os.IsNotExist(err) {
-		t.Errorf("%s does not exist", dirname)
-	}
 }
 
 func TestPutLicenseFile(t *testing.T) {
