@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	_ "embed"
@@ -15,6 +16,9 @@ func main() {
 	}
 	if err := PutLicenseFile(name); err != nil {
 		panic("cannot put license file")
+	}
+	if err := InitializeGit(name); err != nil {
+		panic("cannot initialize git")
 	}
 }
 
@@ -64,6 +68,16 @@ func PutLicenseFile(dirname string) (err error) {
 	}
 	if n == 0 {
 		return errors.New("cannot write to LICENSE")
+	}
+	return nil
+}
+
+// InitializeGit initialize git repository.
+func InitializeGit(dirname string) error {
+	cmd := exec.Command("git", "init", "-q")
+	cmd.Dir = dirname
+	if err := cmd.Run(); err != nil {
+		return err
 	}
 	return nil
 }

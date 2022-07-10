@@ -61,3 +61,14 @@ func TestPutLicenseFile(t *testing.T) {
 
 	assertExists(t, filepath.Join(tempdirname, "LICENSE"))
 }
+
+func TestInitializeGit(t *testing.T) {
+	tempdirname := prepareTempDir(t, "PutLicenseFile")
+	defer cleanupTempDir(t, tempdirname)
+
+	if err := InitializeGit(tempdirname); err != nil {
+		t.Fatalf("InitializeGit(%q) got an error: %v", tempdirname, err)
+	}
+
+	assertExists(t, filepath.Join(tempdirname, ".git"))
+}
