@@ -34,14 +34,14 @@ func assertExists(t *testing.T, dirname string) {
 	}
 }
 
-func assertIsNotEmpty(t *testing.T, filepath string) {
+func assertIsNotEmpty(t *testing.T, path string) {
 	t.Helper()
-	info, err := os.Stat(filepath)
+	info, err := os.Stat(path)
 	if err != nil {
-		t.Fatalf("cannot get stat of %s: %v", filepath, err)
+		t.Fatalf("cannot get stat of %s: %v", path, err)
 	}
 	if info.Size() <= 0 {
-		t.Errorf("%s is empty", filepath)
+		t.Errorf("%s is empty", path)
 	}
 }
 
