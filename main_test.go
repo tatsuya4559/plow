@@ -1,6 +1,7 @@
 package main_test
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"testing"
@@ -73,6 +74,23 @@ func TestPutLicenseFile(t *testing.T) {
 	licenseFilepath := filepath.Join(tempdirname, "LICENSE")
 	assertExists(t, licenseFilepath)
 	assertIsNotEmpty(t, licenseFilepath)
+}
+
+func TestPutPluginFile(t *testing.T) {
+	tempdirname := prepareTempDir(t, "PutPluginFile")
+	defer cleanupTempDir(t, tempdirname)
+
+	if err := PutPluginFile(tempdirname); err != nil {
+		t.Fatalf("PutPluginFile(%q) got an error: %v", tempdirname, err)
+	}
+
+	pluginFilepath := filepath.Join(
+		tempdirname,
+		"plugin",
+		fmt.Sprintf("%s.vim", filepath.Base(tempdirname)),
+	)
+	assertExists(t, pluginFilepath)
+	assertIsNotEmpty(t, pluginFilepath)
 }
 
 func TestInitializeGit(t *testing.T) {

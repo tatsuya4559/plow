@@ -1,18 +1,24 @@
 package main
 
 import (
-	"errors"
+	"flag"
+	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"text/template"
 
 	_ "embed"
 )
 
 func main() {
-	name := os.Args[1]
+	flag.Parse()
+	name := flag.Arg(0)
 	if err := MakePluginDirs(name); err != nil {
 		panic("cannot make dirs")
+	}
+	if err := PutPluginFile(name); err != nil {
+		panic(fmt.Sprintf("cannot put plugin/%s.vim", name))
 	}
 	if err := PutLicenseFile(name); err != nil {
 		panic("cannot put license file")
@@ -49,11 +55,36 @@ func listPluginDirs(name string) []string {
 }
 
 //go:embed template/LICENSE
-var MITLicense []byte
+var MITLicense string
 
 // PutLicenseFile creates a MIT license file.
-func PutLicenseFile(dirname string) (err error) {
-	f, err := os.Create(filepath.Join(dirname, "LICENSE"))
+func PutLicenseFile(dirname string) error {
+	licensePath := filepath.Join(dirname, "LICENSE")
+	return createFileFromTeplate(licensePath, MITLicense, nil)
+}
+
+//go:embed template/plugin.vim
+var PluginFile string
+
+// PutPluginFile creates plugin/<name>.vim.
+func PutPluginFile(dirname string) error {
+	pluginName := filepath.Base(dirname)
+	pluginFilePath := filepath.Join(dirname, "plugin", fmt.Sprintf("%s.vim", pluginName))
+	data := map[string]any{
+		"Name": pluginName,
+	}
+	return createFileFromTeplate(pluginFilePath, PluginFile, data)
+}
+
+func createFileFromTeplate(path, tmpl string, data map[string]any) (err error) {
+	dir := filepath.Dir(path)
+	if _, err := os.Stat(dir); os.IsNotExist(err) {
+		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
+			return fmt.Errorf("cannot make directory for %s: %w", path, err)
+		}
+	}
+
+	f, err := os.Create(path)
 	if err != nil {
 		return err
 	}
@@ -62,13 +93,15 @@ func PutLicenseFile(dirname string) (err error) {
 			err = closingErr
 		}
 	}()
-	n, err := f.Write(MITLicense)
+
+	tpl, err := template.New("").Parse(tmpl)
 	if err != nil {
 		return err
 	}
-	if n == 0 {
-		return errors.New("cannot write to LICENSE")
+	if err := tpl.Execute(f, data); err != nil {
+		return err
 	}
+
 	return nil
 }
 
