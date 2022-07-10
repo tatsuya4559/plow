@@ -48,7 +48,7 @@ func listPluginDirs(name string) []string {
 	return ds
 }
 
-//go:embed LICENSE
+//go:embed template/LICENSE
 var MITLicense []byte
 
 // PutLicenseFile creates a MIT license file.
