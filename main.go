@@ -60,7 +60,7 @@ var MITLicense string
 // PutLicenseFile creates a MIT license file.
 func PutLicenseFile(dirname string) error {
 	licensePath := filepath.Join(dirname, "LICENSE")
-	return createFileFromTeplate(licensePath, MITLicense, nil)
+	return createFileFromTemplate(licensePath, MITLicense, nil)
 }
 
 //go:embed template/plugin.vim
@@ -73,10 +73,10 @@ func PutPluginFile(dirname string) error {
 	data := map[string]any{
 		"Name": pluginName,
 	}
-	return createFileFromTeplate(pluginFilePath, PluginFile, data)
+	return createFileFromTemplate(pluginFilePath, PluginFile, data)
 }
 
-func createFileFromTeplate(path, tmpl string, data map[string]any) (err error) {
+func createFileFromTemplate(path, tmpl string, data map[string]any) (err error) {
 	dir := filepath.Dir(path)
 	if _, err := os.Stat(dir); os.IsNotExist(err) {
 		if err := os.MkdirAll(dir, os.ModePerm); err != nil {
