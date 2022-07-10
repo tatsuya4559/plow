@@ -33,6 +33,17 @@ func assertExists(t *testing.T, dirname string) {
 	}
 }
 
+func assertIsNotEmpty(t *testing.T, filepath string) {
+	t.Helper()
+	info, err := os.Stat(filepath)
+	if err != nil {
+		t.Fatalf("cannot get stat of %s: %v", filepath, err)
+	}
+	if info.Size() <= 0 {
+		t.Errorf("%s is empty", filepath)
+	}
+}
+
 func TestMakePluginDirs(t *testing.T) {
 	tempdirname := prepareTempDir(t, "MakePluginDirs")
 	if err := os.Remove(tempdirname); err != nil {
@@ -59,7 +70,9 @@ func TestPutLicenseFile(t *testing.T) {
 		t.Fatalf("PutLicenseFile(%q) got an error: %v", tempdirname, err)
 	}
 
-	assertExists(t, filepath.Join(tempdirname, "LICENSE"))
+	licenseFilepath := filepath.Join(tempdirname, "LICENSE")
+	assertExists(t, licenseFilepath)
+	assertIsNotEmpty(t, licenseFilepath)
 }
 
 func TestInitializeGit(t *testing.T) {
