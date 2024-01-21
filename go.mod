@@ -1,3 +1,3 @@
-module github.com/tatsuya4559/plugin-template.vim
+module github.com/tatsuya4559/plow
 
 go 1.18
