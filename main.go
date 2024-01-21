@@ -41,6 +41,10 @@ func run(args []string) {
 
 func parseFlag(args []string) *flag.FlagSet {
 	fset := flag.NewFlagSet(args[0], flag.ExitOnError)
+	fset.Usage = func() {
+		fmt.Fprintf(fset.Output(), "plow: a scaffolding tool for vim plugin.\n\n")
+		fmt.Fprintf(fset.Output(), "Usage: plow DIR\n")
+	}
 	fset.Parse(args[1:])
 	return fset
 }
