@@ -1,9 +1,14 @@
 .DEFAULT_GOAL := help
+BIN := plow
 
+build: $(BIN) ## Build all
+
+$(BIN): main.go
+	go build -o $@ $^
 
 .PHONY: test
 test: ## Run tests
-	go test -v ./...
+	go test -v .
 
 .PHONY: help
 help: ## Display this help
