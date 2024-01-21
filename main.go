@@ -26,6 +26,10 @@ func main() {
 
 func run(args []string) {
 	fset := parseFlag(args)
+	if fset.NArg() < 1 {
+		fset.Usage()
+		os.Exit(2)
+	}
 	dir := fset.Arg(0)
 	files := newPluginFiles(dir)
 	for _, f := range files {
